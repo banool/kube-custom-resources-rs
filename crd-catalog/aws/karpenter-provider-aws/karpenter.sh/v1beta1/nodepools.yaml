@@ -5,6 +5,17 @@ metadata:
     controller-gen.kubebuilder.io/version: "v0.15.0"
   name: "nodepools.karpenter.sh"
 spec:
+  conversion:
+    strategy: "Webhook"
+    webhook:
+      clientConfig:
+        service:
+          name: "karpenter"
+          namespace: "kube-system"
+          port: 8443
+      conversionReviewVersions:
+        - "v1beta1"
+        - "v1"
   group: "karpenter.sh"
   names:
     categories:
@@ -62,14 +73,13 @@ spec:
                             pattern: "^((100|[0-9]{1,2})%|[0-9]+)$"
                             type: "string"
                           reasons:
-                            description: "Reasons is a list of disruption methods that this budget applies to. If Reasons is not set, this budget applies to all methods.\nOtherwise, this will apply to each reason defined.\nallowed reasons are underutilized, expired, empty, and drifted."
+                            description: "Reasons is a list of disruption methods that this budget applies to. If Reasons is not set, this budget applies to all methods.\nOtherwise, this will apply to each reason defined.\nallowed reasons are Underutilized, Empty, and Drifted."
                             items:
                               description: "DisruptionReason defines valid reasons for disruption budgets."
                               enum:
-                                - "underutilized"
-                                - "expired"
-                                - "empty"
-                                - "drifted"
+                                - "Underutilized"
+                                - "Empty"
+                                - "Drifted"
                               type: "string"
                             type: "array"
                           schedule:
@@ -387,6 +397,10 @@ spec:
                               - "key"
                             type: "object"
                           type: "array"
+                        terminationGracePeriod:
+                          description: "TerminationGracePeriod is the maximum duration the controller will wait before forcefully deleting the pods on a node, measured from when deletion is first initiated.\n\n\nWarning: this feature takes precedence over a Pod's terminationGracePeriodSeconds value, and bypasses any blocked PDBs or the karpenter.sh/do-not-disrupt annotation.\n\n\nThis field is intended to be used by cluster administrators to enforce that nodes can be cycled within a given time period.\nWhen set, drifted nodes will begin draining even if there are pods blocking eviction. Draining will respect PDBs and the do-not-disrupt annotation until the TGP is reached.\n\n\nKarpenter will preemptively delete pods so their terminationGracePeriodSeconds align with the node's terminationGracePeriod.\nIf a pod would be terminated without being granted its full terminationGracePeriodSeconds prior to the node timeout,\nthat pod will be deleted at T = node timeout - pod terminationGracePeriodSeconds.\n\n\nThe feature can also be used to allow maximum time limits for long-running jobs which can delay node termination with preStop hooks.\nIf left undefined, the controller will wait indefinitely for pods to be drained."
+                          pattern: "^([0-9]+(s|m|h))+$"
+                          type: "string"
                       required:
                         - "nodeClassRef"
                         - "requirements"
@@ -406,6 +420,50 @@ spec:
             status:
               description: "NodePoolStatus defines the observed state of NodePool"
               properties:
+                conditions:
+                  description: "Conditions contains signals for health and readiness"
+                  items:
+                    description: "Condition aliases the upstream type and adds additional helper methods"
+                    properties:
+                      lastTransitionTime:
+                        description: "lastTransitionTime is the last time the condition transitioned from one status to another.\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable."
+                        format: "date-time"
+                        type: "string"
+                      message:
+                        description: "message is a human readable message indicating details about the transition.\nThis may be an empty string."
+                        maxLength: 32768
+                        type: "string"
+                      observedGeneration:
+                        description: "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance."
+                        format: "int64"
+                        minimum: 0.0
+                        type: "integer"
+                      reason:
+                        description: "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty."
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$"
+                        type: "string"
+                      status:
+                        description: "status of the condition, one of True, False, Unknown."
+                        enum:
+                          - "True"
+                          - "False"
+                          - "Unknown"
+                        type: "string"
+                      type:
+                        description: "type of condition in CamelCase or in foo.example.com/CamelCase.\n---\nMany .condition.type values are consistent across resources like Available, but because arbitrary conditions can be\nuseful (see .node.status.conditions), the ability to deconflict is important.\nThe regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)"
+                        maxLength: 316
+                        pattern: "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$"
+                        type: "string"
+                    required:
+                      - "lastTransitionTime"
+                      - "message"
+                      - "reason"
+                      - "status"
+                      - "type"
+                    type: "object"
+                  type: "array"
                 resources:
                   additionalProperties:
                     anyOf:
@@ -420,6 +478,6 @@ spec:
             - "spec"
           type: "object"
       served: true
-      storage: true
+      storage: false
       subresources:
         status: {}

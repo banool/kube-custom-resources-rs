@@ -736,6 +736,11 @@ pub struct PrometheusSpec {
     /// Prometheus Pods.
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "serviceAccountName")]
     pub service_account_name: Option<String>,
+    /// Defines the service discovery role used to discover targets from `ServiceMonitor` objects.
+    /// If set, the value should be either "Endpoints" or "EndpointSlice".
+    /// If unset, the operator assumes the "Endpoints" role.
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "serviceDiscoveryRole")]
+    pub service_discovery_role: Option<PrometheusServiceDiscoveryRole>,
     /// Namespaces to match for ServicedMonitors discovery. An empty label selector
     /// matches all namespaces. A null label selector (default value) matches the current
     /// namespace only.
@@ -6816,6 +6821,11 @@ pub struct PrometheusRulesAlert {
 
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct PrometheusScrapeClasses {
+    /// AttachMetadata configures additional metadata to the discovered targets.
+    /// When the scrape object defines its own configuration, it takes
+    /// precedence over the scrape class configuration.
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "attachMetadata")]
+    pub attach_metadata: Option<PrometheusScrapeClassesAttachMetadata>,
     /// Default indicates that the scrape applies to all scrape objects that
     /// don't configure an explicit scrape class name.
     /// 
@@ -6856,6 +6866,21 @@ pub struct PrometheusScrapeClasses {
     /// For now only the `caFile`, `certFile` and `keyFile` fields are supported.
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "tlsConfig")]
     pub tls_config: Option<PrometheusScrapeClassesTlsConfig>,
+}
+
+/// AttachMetadata configures additional metadata to the discovered targets.
+/// When the scrape object defines its own configuration, it takes
+/// precedence over the scrape class configuration.
+#[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct PrometheusScrapeClassesAttachMetadata {
+    /// When set to true, Prometheus attaches node metadata to the discovered
+    /// targets.
+    /// 
+    /// 
+    /// The Prometheus service account must have the `list` and `watch`
+    /// permissions on the `Nodes` objects.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub node: Option<bool>,
 }
 
 /// RelabelConfig allows dynamic rewriting of the label set for targets, alerts,
@@ -7474,6 +7499,14 @@ pub struct PrometheusSecurityContextWindowsOptions {
     /// PodSecurityContext, the value specified in SecurityContext takes precedence.
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "runAsUserName")]
     pub run_as_user_name: Option<String>,
+}
+
+/// Specification of the desired behavior of the Prometheus cluster. More info:
+/// https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum PrometheusServiceDiscoveryRole {
+    Endpoints,
+    EndpointSlice,
 }
 
 /// Namespaces to match for ServicedMonitors discovery. An empty label selector

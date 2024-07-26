@@ -23,7 +23,7 @@ pub struct VolumeSpec {
     pub standby: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "accessMode")]
     pub access_mode: Option<VolumeAccessMode>,
-    /// Deprecated: Replaced by field `dataEngine`.
+    /// Deprecated:Replaced by field `dataEngine`.'
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "backendStoreDriver")]
     pub backend_store_driver: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "backingImage")]
@@ -309,6 +309,10 @@ pub struct VolumeStatus {
 
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct VolumeStatusCloneStatus {
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "attemptCount")]
+    pub attempt_count: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "nextAllowedAttemptAt")]
+    pub next_allowed_attempt_at: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub snapshot: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "sourceVolume")]
@@ -341,8 +345,6 @@ pub struct VolumeStatusKubernetesStatus {
 pub struct VolumeStatusKubernetesStatusWorkloadsStatus {
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "podName")]
     pub pod_name: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none", rename = "podNamespace")]
-    pub pod_namespace: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "podStatus")]
     pub pod_status: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "workloadName")]

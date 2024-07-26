@@ -47,6 +47,9 @@ pub struct PulpSpec {
     /// Content defines desired state of pulpcore-content resources
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub content: Option<PulpContent>,
+    /// Name of the ConfigMap to define Pulp configurations not available through this CR.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub custom_pulp_settings: Option<String>,
     /// Database defines desired state of postgres resources
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub database: Option<PulpDatabase>,
@@ -161,7 +164,7 @@ pub struct PulpSpec {
     /// Name of the Secret to provide Django cryptographic signing. Default: "pulp-secret-key"
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pulp_secret_key: Option<String>,
-    /// Definition of /etc/pulp/settings.py config file.
+    /// [DEPRECATED] Definition of /etc/pulp/settings.py config file. This field is deprecated and will be removed in the future, use the custom_pulp_settings field instead.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub pulp_settings: Option<BTreeMap<String, serde_json::Value>>,
     /// PersistenVolumeClaim name that will be used by Pulp pods. If defined, the PVC must be provisioned by the user and the operator will only configure the deployment to use it

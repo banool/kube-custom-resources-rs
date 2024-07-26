@@ -7068,6 +7068,10 @@ pub struct JobSetStatus {
     /// RestartsCountTowardsMax tracks the number of times the JobSet has restarted that counts towards the maximum allowed number of restarts.
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "restartsCountTowardsMax")]
     pub restarts_count_towards_max: Option<i32>,
+    /// TerminalState the state of the JobSet when it finishes execution.
+    /// It can be either Complete or Failed. Otherwise, it is empty by default.
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "terminalState")]
+    pub terminal_state: Option<String>,
 }
 
 /// ReplicatedJobStatus defines the observed ReplicatedJobs Readiness.

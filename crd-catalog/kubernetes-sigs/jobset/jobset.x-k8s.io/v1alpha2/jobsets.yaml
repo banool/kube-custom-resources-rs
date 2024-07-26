@@ -14,6 +14,10 @@ spec:
   scope: "Namespaced"
   versions:
     - additionalPrinterColumns:
+        - description: "Final state of JobSet"
+          jsonPath: ".status.terminalState"
+          name: "TerminalState"
+          type: "string"
         - description: "Number of restarts"
           jsonPath: ".status.restarts"
           name: "Restarts"
@@ -4886,6 +4890,9 @@ spec:
                   description: "RestartsCountTowardsMax tracks the number of times the JobSet has restarted that counts towards the maximum allowed number of restarts."
                   format: "int32"
                   type: "integer"
+                terminalState:
+                  description: "TerminalState the state of the JobSet when it finishes execution.\nIt can be either Complete or Failed. Otherwise, it is empty by default."
+                  type: "string"
               type: "object"
           type: "object"
       served: true

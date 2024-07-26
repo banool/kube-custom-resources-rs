@@ -195,7 +195,8 @@ spec:
                                       description: "The key of the secret to select from.  Must be a valid secret key."
                                       type: "string"
                                     name:
-                                      description: "Name of the referent.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Add other useful fields. apiVersion, kind, uid?"
+                                      default: ""
+                                      description: "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nTODO: Add other useful fields. apiVersion, kind, uid?\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896."
                                       type: "string"
                                     optional:
                                       description: "Specify whether the Secret or its key must be defined"
@@ -357,6 +358,12 @@ spec:
                       description: "It allows to set successful response code. 200, 201 and 204 are supported(default 201)."
                       format: "int32"
                       type: "integer"
+                    tag:
+                      description: "opentelemetry uses the tag value for incoming metrics."
+                      type: "string"
+                    tagFromURI:
+                      description: "If true, tag will be created from uri. e.g. v1_metrics from /v1/metrics"
+                      type: "boolean"
                     tagKey:
                       description: "Specify the key name to overwrite a tag. If set, the tag will be overwritten by a value of the key."
                       type: "string"

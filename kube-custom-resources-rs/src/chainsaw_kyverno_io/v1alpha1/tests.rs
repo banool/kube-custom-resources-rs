@@ -128,7 +128,7 @@ pub struct TestCatchCommand {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -197,7 +197,7 @@ pub struct TestCatchDelete {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestCatchDeleteBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -294,7 +294,7 @@ pub struct TestCatchDescribe {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -336,7 +336,7 @@ pub struct TestCatchDescribeClusters {
 /// Events determines the events collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestCatchEvents {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -378,7 +378,7 @@ pub struct TestCatchGet {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -420,7 +420,7 @@ pub struct TestCatchGetClusters {
 /// PodLogs determines the pod logs collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestCatchPodLogs {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -470,7 +470,7 @@ pub struct TestCatchScript {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -547,7 +547,7 @@ pub struct TestCatchWait {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -675,7 +675,7 @@ pub struct TestSteps {
     /// Cleanup defines what will be executed after the test is terminated.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cleanup: Option<Vec<TestStepsCleanup>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -705,8 +705,11 @@ pub struct TestSteps {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timeouts: Option<TestStepsTimeouts>,
     /// Try defines what the step will try to execute.
-    #[serde(rename = "try")]
-    pub r#try: Vec<TestStepsTry>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "try")]
+    pub r#try: Option<Vec<TestStepsTry>>,
+    /// Use defines a reference to a step template.
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "use")]
+    pub r#use: Option<TestStepsUse>,
 }
 
 /// Binding represents a key/value set as a binding in an executing test.
@@ -765,7 +768,7 @@ pub struct TestStepsCatchCommand {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -834,7 +837,7 @@ pub struct TestStepsCatchDelete {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsCatchDeleteBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -931,7 +934,7 @@ pub struct TestStepsCatchDescribe {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -973,7 +976,7 @@ pub struct TestStepsCatchDescribeClusters {
 /// Events determines the events collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsCatchEvents {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1015,7 +1018,7 @@ pub struct TestStepsCatchGet {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1057,7 +1060,7 @@ pub struct TestStepsCatchGetClusters {
 /// PodLogs determines the pod logs collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsCatchPodLogs {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1107,7 +1110,7 @@ pub struct TestStepsCatchScript {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1184,7 +1187,7 @@ pub struct TestStepsCatchWait {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1311,7 +1314,7 @@ pub struct TestStepsCleanupCommand {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1380,7 +1383,7 @@ pub struct TestStepsCleanupDelete {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsCleanupDeleteBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1477,7 +1480,7 @@ pub struct TestStepsCleanupDescribe {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1519,7 +1522,7 @@ pub struct TestStepsCleanupDescribeClusters {
 /// Events determines the events collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsCleanupEvents {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1561,7 +1564,7 @@ pub struct TestStepsCleanupGet {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1603,7 +1606,7 @@ pub struct TestStepsCleanupGetClusters {
 /// PodLogs determines the pod logs collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsCleanupPodLogs {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1653,7 +1656,7 @@ pub struct TestStepsCleanupScript {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1730,7 +1733,7 @@ pub struct TestStepsCleanupWait {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1876,7 +1879,7 @@ pub struct TestStepsFinallyCommand {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -1945,7 +1948,7 @@ pub struct TestStepsFinallyDelete {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsFinallyDeleteBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2042,7 +2045,7 @@ pub struct TestStepsFinallyDescribe {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2084,7 +2087,7 @@ pub struct TestStepsFinallyDescribeClusters {
 /// Events determines the events collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsFinallyEvents {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2126,7 +2129,7 @@ pub struct TestStepsFinallyGet {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2168,7 +2171,7 @@ pub struct TestStepsFinallyGetClusters {
 /// PodLogs determines the pod logs collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsFinallyPodLogs {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2218,7 +2221,7 @@ pub struct TestStepsFinallyScript {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2295,7 +2298,7 @@ pub struct TestStepsFinallyWait {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2467,7 +2470,7 @@ pub struct TestStepsTryApply {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryApplyBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2547,7 +2550,7 @@ pub struct TestStepsTryAssert {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryAssertBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2601,7 +2604,7 @@ pub struct TestStepsTryCommand {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2670,7 +2673,7 @@ pub struct TestStepsTryCreate {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryCreateBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2750,7 +2753,7 @@ pub struct TestStepsTryDelete {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryDeleteBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2847,7 +2850,7 @@ pub struct TestStepsTryDescribe {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2893,7 +2896,7 @@ pub struct TestStepsTryError {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryErrorBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2938,7 +2941,7 @@ pub struct TestStepsTryErrorClusters {
 /// Events determines the events collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsTryEvents {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -2980,7 +2983,7 @@ pub struct TestStepsTryGet {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3025,7 +3028,7 @@ pub struct TestStepsTryPatch {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryPatchBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3102,7 +3105,7 @@ pub struct TestStepsTryPatchOutputs {
 /// PodLogs determines the pod logs collector to execute.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct TestStepsTryPodLogs {
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3149,7 +3152,7 @@ pub struct TestStepsTryProxy {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3212,7 +3215,7 @@ pub struct TestStepsTryScript {
     /// Check is an assertion tree to validate the operation outcome.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub check: Option<BTreeMap<String, serde_json::Value>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3289,7 +3292,7 @@ pub struct TestStepsTryUpdate {
     /// Bindings defines additional binding key/values.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bindings: Option<Vec<TestStepsTryUpdateBindings>>,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3369,7 +3372,7 @@ pub struct TestStepsTryWait {
     /// API version of the referent.
     #[serde(rename = "apiVersion")]
     pub api_version: String,
-    /// Cluster defines the target cluster (default cluster will be used if not specified and/or overridden).
+    /// Cluster defines the target cluster (will be inherited if not specified).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Clusters holds a registry to clusters to support multi-cluster tests.
@@ -3447,6 +3450,14 @@ pub struct TestStepsTryWaitForJsonPath {
     pub path: String,
     /// Value defines the expected value to wait for, e.g., "Running".
     pub value: String,
+}
+
+/// Use defines a reference to a step template.
+#[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
+pub struct TestStepsUse {
+    /// Template references a step template.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub template: Option<String>,
 }
 
 /// Timeouts for the test. Overrides the global timeouts set in the Configuration on a per operation basis.

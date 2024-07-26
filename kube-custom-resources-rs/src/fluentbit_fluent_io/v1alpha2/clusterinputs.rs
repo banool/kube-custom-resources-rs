@@ -267,8 +267,12 @@ pub struct ClusterInputHttpTlsKeyPasswordValueFromSecretKeyRef {
     /// The key of the secret to select from.  Must be a valid secret key.
     pub key: String,
     /// Name of the referent.
-    /// More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    /// This field is effectively required, but due to backwards compatibility is
+    /// allowed to be empty. Instances of this type with an empty value here are
+    /// almost certainly wrong.
     /// TODO: Add other useful fields. apiVersion, kind, uid?
+    /// More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+    /// TODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// Specify whether the Secret or its key must be defined
@@ -419,6 +423,12 @@ pub struct ClusterInputOpenTelemetry {
     /// It allows to set successful response code. 200, 201 and 204 are supported(default 201).
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "successfulResponseCode")]
     pub successful_response_code: Option<i32>,
+    /// opentelemetry uses the tag value for incoming metrics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tag: Option<String>,
+    /// If true, tag will be created from uri. e.g. v1_metrics from /v1/metrics
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "tagFromURI")]
+    pub tag_from_uri: Option<bool>,
     /// Specify the key name to overwrite a tag. If set, the tag will be overwritten by a value of the key.
     #[serde(default, skip_serializing_if = "Option::is_none", rename = "tagKey")]
     pub tag_key: Option<String>,

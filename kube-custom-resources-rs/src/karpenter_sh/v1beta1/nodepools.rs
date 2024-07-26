@@ -8,6 +8,7 @@ mod prelude {
     pub use serde::{Serialize, Deserialize};
     pub use std::collections::BTreeMap;
     pub use k8s_openapi::apimachinery::pkg::util::intstr::IntOrString;
+    pub use k8s_openapi::apimachinery::pkg::apis::meta::v1::Condition;
 }
 use self::prelude::*;
 
@@ -87,7 +88,7 @@ pub struct NodePoolDisruptionBudgets {
     pub nodes: String,
     /// Reasons is a list of disruption methods that this budget applies to. If Reasons is not set, this budget applies to all methods.
     /// Otherwise, this will apply to each reason defined.
-    /// allowed reasons are underutilized, expired, empty, and drifted.
+    /// allowed reasons are Underutilized, Empty, and Drifted.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reasons: Option<Vec<String>>,
     /// Schedule specifies when a budget begins being active, following
@@ -156,6 +157,25 @@ pub struct NodePoolTemplateSpec {
     /// Taints will be applied to the NodeClaim's node.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub taints: Option<Vec<NodePoolTemplateSpecTaints>>,
+    /// TerminationGracePeriod is the maximum duration the controller will wait before forcefully deleting the pods on a node, measured from when deletion is first initiated.
+    /// 
+    /// 
+    /// Warning: this feature takes precedence over a Pod's terminationGracePeriodSeconds value, and bypasses any blocked PDBs or the karpenter.sh/do-not-disrupt annotation.
+    /// 
+    /// 
+    /// This field is intended to be used by cluster administrators to enforce that nodes can be cycled within a given time period.
+    /// When set, drifted nodes will begin draining even if there are pods blocking eviction. Draining will respect PDBs and the do-not-disrupt annotation until the TGP is reached.
+    /// 
+    /// 
+    /// Karpenter will preemptively delete pods so their terminationGracePeriodSeconds align with the node's terminationGracePeriod.
+    /// If a pod would be terminated without being granted its full terminationGracePeriodSeconds prior to the node timeout,
+    /// that pod will be deleted at T = node timeout - pod terminationGracePeriodSeconds.
+    /// 
+    /// 
+    /// The feature can also be used to allow maximum time limits for long-running jobs which can delay node termination with preStop hooks.
+    /// If left undefined, the controller will wait indefinitely for pods to be drained.
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "terminationGracePeriod")]
+    pub termination_grace_period: Option<String>,
 }
 
 /// Kubelet defines args to be used when configuring kubelet on provisioned nodes.
@@ -327,6 +347,9 @@ pub enum NodePoolTemplateSpecTaintsEffect {
 /// NodePoolStatus defines the observed state of NodePool
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
 pub struct NodePoolStatus {
+    /// Conditions contains signals for health and readiness
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub conditions: Option<Vec<Condition>>,
     /// Resources is the list of resources that have been provisioned.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub resources: Option<BTreeMap<String, IntOrString>>,

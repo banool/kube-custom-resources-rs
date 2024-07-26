@@ -319,6 +319,10 @@ pub struct ClusterStatus {
     /// FAILED, HEALING, MAINTENANCE, REBOOTING_BROKER, and UPDATING.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "zookeeperConnectString")]
+    pub zookeeper_connect_string: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none", rename = "zookeeperConnectStringTLS")]
+    pub zookeeper_connect_string_tls: Option<String>,
 }
 
 /// All CRs managed by ACK have a common `Status.ACKResourceMetadata` member

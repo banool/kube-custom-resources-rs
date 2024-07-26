@@ -266,6 +266,10 @@ spec:
                 state:
                   description: "The state of the cluster. The possible states are ACTIVE, CREATING, DELETING,\nFAILED, HEALING, MAINTENANCE, REBOOTING_BROKER, and UPDATING."
                   type: "string"
+                zookeeperConnectString:
+                  type: "string"
+                zookeeperConnectStringTLS:
+                  type: "string"
               type: "object"
           type: "object"
       served: true

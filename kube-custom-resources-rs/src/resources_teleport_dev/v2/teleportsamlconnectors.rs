@@ -34,7 +34,7 @@ pub struct TeleportSAMLConnectorSpec {
     /// Audience uniquely identifies our service provider.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub audience: Option<String>,
-    /// Cert is the identity provider certificate PEM. IDP signs <Response> responses using this certificate.
+    /// Cert is the identity provider certificate PEM. IDP signs `<Response>` responses using this certificate.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cert: Option<String>,
     /// ClientRedirectSettings defines which client redirect URLs are allowed for non-browser SSO logins other than the standard localhost ones.
